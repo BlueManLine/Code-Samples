@@ -19,25 +19,25 @@ class MrBlue_Cache
      * if on server there are many sites using memory caching
      * (for example memcache), there may be problems without prefix
      */
-    const CACHE_PREFIX_NAME = 'SportsLadder2013__';
+    const CACHE_PREFIX_NAME = 'ProjectNamePrefix2013__';
     
     protected $aCacheOptions = array(
-        'default_lifetime' => 86400,
-        'index_lifetime' => 865000
+            'default_lifetime' => 86400,
+            'index_lifetime' => 865000
     );
     
     public function __construct($aOptions=array())
     {
         $this->oConfig = Zend_Registry::get('config');
-		
-    	if(Zend_Registry::isRegistered('cache')) {
-			$this->oCache = Zend_Registry::get('cache');
-		}
-		else {
-			throw new Exception('Cache->__construct() : No object cache in registry!');
-		}
-		
-		$this->aCacheOptions = array_merge($this->aCacheOptions, $aOptions);
+        
+        if(Zend_Registry::isRegistered('cache')) {
+            $this->oCache = Zend_Registry::get('cache');
+        }
+        else {
+            throw new Exception('Cache->__construct() : No object cache in registry!');
+        }
+        
+        $this->aCacheOptions = array_merge($this->aCacheOptions, $aOptions);
     }
     
     /**
@@ -50,14 +50,14 @@ class MrBlue_Cache
     public static function getInstance($aOptions=array()) {
         if( null === self::$_instance ){
             self::$_instance = new self($aOptions);
-		}
+        }
         return self::$_instance;
     }
     
-	/**
-	 * tell is cache active
-	 * @return boolean
-	 */
+    /**
+     * tell is cache active
+     * @return boolean
+     */
     public function isActive(){
         if(! $this->oCache){
             return false;
@@ -109,7 +109,7 @@ class MrBlue_Cache
         if(! $this->isActive()){
             return null;
         }
-		
+        
         $this->oCache->save($mCacheValue, $this->prepareKey($sCacheKey), $aTags, $iLifetime);
         
         $this->updateIndex($sCacheKey);
@@ -129,10 +129,10 @@ class MrBlue_Cache
             throw new Exception('Cache->get() : $mCacheValue invalid!');
         }
         if(! $this->isActive()){
-			return null;
+            return null;
         }
         if(! is_array($mCacheKey)){
-             return $this->oCache->load($this->prepareKey($mCacheKey));
+            return $this->oCache->load($this->prepareKey($mCacheKey));
         }
         else {
             $aReturnCache =array();
@@ -159,9 +159,9 @@ class MrBlue_Cache
             return null;
         }
         if(! is_array($mCacheKey)){
-             $this->oCache->remove($this->prepareKey($mCacheKey));
-             $this->updateIndex($mCacheKey, true);
-             return true;
+            $this->oCache->remove($this->prepareKey($mCacheKey));
+            $this->updateIndex($mCacheKey, true);
+            return true;
         }
         else {
             if (!empty($mCacheKey)) {
@@ -188,9 +188,9 @@ class MrBlue_Cache
      */
     public function clean($method = Zend_Cache::CLEANING_MODE_ALL, $aTags = array()){
         if( $this->oConfig->serwer->cache->enabled ){
-			return $this->oCache->clean($method, $aTags);
-		}
-	}
+            return $this->oCache->clean($method, $aTags);
+        }
+    }
     
     /**
      * get cache option
@@ -234,7 +234,7 @@ class MrBlue_Cache
             else {
                 unset($aIndex[$newKey]);
             }
-			$this->oCache->save($aIndex, $this->prepareKey(self::CACHE_INDEX_UNIQUE_KEY), array(), $this->getOption('index_lifetime'));
+            $this->oCache->save($aIndex, $this->prepareKey(self::CACHE_INDEX_UNIQUE_KEY), array(), $this->getOption('index_lifetime'));
         }
         return true;
     }
@@ -248,5 +248,5 @@ class MrBlue_Cache
         return preg_replace('/[^A-Za-z0-9_]/D','_',$key);
         //return str_replace(array(',', ';', '.', '<', '>','/','\\','+','-','(',')','=','{','}','|',':','&'), '_', $key);
     }
-	
+
 }
